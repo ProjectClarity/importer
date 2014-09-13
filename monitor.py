@@ -34,6 +34,7 @@ while True:
       except TypeError:
         message['payload']['body'] = body
       message['userid'] = u['_id']
+      message['payload']['headers'].append({"name": "X-Time-Zone", "value": user.get_timezone()})
       try:
         object_id = raw_data.insert(message)
         send_to_queue({'object_id': str(object_id)})

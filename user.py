@@ -21,6 +21,14 @@ class User():
   def get_credentials(self):
     return OAuth2Credentials.from_json(json.dumps(self.get('credentials')))
 
+  def get_timezone(self):
+    timezone = self.get('timezone')
+    if not timezone:
+      calendar_service = self.build('calendar', v='v3')
+      default_calendar = calendar_service.calendars().get(calendarId='primary').execute()
+      self.set('timezone', default_calendar['timeZone'])
+    return timezone
+
   def get_history_token(self):
     history_token = self.get('history_token')
     if not history_token:
