@@ -42,7 +42,7 @@ class User():
     messages = flatmap(lambda x: x['messages'], changes)
     thread_ids = set([x['threadId'] for x in messages])
     threads = map(lambda x: gmail_service.users().threads().get(userId='me', id=x).execute(), thread_ids)
-    full_messages = map(lambda x: gmail_service.users().messages().get(userId='me', id=x['messages'][0]['id']).execute(), threads)
+    full_messages = map(lambda x: x['messages'][0], threads)
     return full_messages, history['historyId']
 
   def build(self, service, **kwargs):
