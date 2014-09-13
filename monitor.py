@@ -28,6 +28,7 @@ while True:
         if body is None:
           continue
         del message['payload']['parts']
+      body = str(body)
       try:
         message['payload']['body'] = base64.urlsafe_b64decode(body)
       except TypeError:
