@@ -9,6 +9,8 @@ while True:
     messages, history_token = user.get_new_messages()
     user.set('history_token', history_token)
     for message in messages:
+      if 'TRASH' in message['labelIds']:
+        continue
       if message['payload']['mimeType'] in ['text/plain', 'text/html']:
         body = message['payload']['body']['data']
       else:
