@@ -1,4 +1,5 @@
 from remote import *
+import apiclient.discovery, httplib2
 
 def send_to_queue(d):
   message = JSONMessage()
@@ -18,3 +19,6 @@ def process_messages(l, f):
   for m in l:
     f(m)
     delete_message(m)
+
+def build(service, credentials, v='v2'):
+  return apiclient.discovery.build(serviceName=service, version=v, http=credentials.authorize(httplib2.Http()))
