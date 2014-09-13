@@ -41,7 +41,12 @@ class User():
       changes.extend(history['history'])
     messages = flatmap(lambda x: x['messages'], changes)
     thread_ids = set([x['threadId'] for x in messages])
-    threads = map(lambda x: gmail_service.users().threads().get(userId='me', id=x).execute(), thread_ids)
+    def get_thread(x):
+      try:
+        return gmail_service.users().threads().get(userId='me', id=x).execute()
+      except:
+        return None
+    threads = filter(lambda x: bool(x), map(get_thread , thread_ids))
     full_messages = map(lambda x: x['messages'][0], threads)
     return full_messages, history['historyId']
 
