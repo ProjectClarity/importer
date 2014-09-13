@@ -32,7 +32,7 @@ while True:
       try:
         message['payload']['body'] = base64.urlsafe_b64decode(body)
       except TypeError:
-        message['payload']['body'] = body
+        continue
       message['userid'] = u['_id']
       message['payload']['headers'].append({"name": "X-Time-Zone", "value": user.get_timezone()})
       try:
