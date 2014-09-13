@@ -10,7 +10,7 @@ while True:
     user.set('history_token', history_token)
     for message in messages:
       if message['payload']['mimeType'] in ['text/plain', 'text/html']:
-        body = message['payload']['body']
+        body = message['payload']['body']['data']
       else:
         parts = message['payload']['parts']
         body = None
@@ -25,8 +25,9 @@ while True:
               break
         if body is None:
           continue
-      del message['payload']['parts']
+        del message['payload']['parts']
       message['payload']['body'] = base64.b64decode(body)
+      message['userid'] = u['_id']
       try:
         object_id = raw_data.insert(message)
         send_to_queue({'object_id': str(object_id)})
