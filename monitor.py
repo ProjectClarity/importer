@@ -26,7 +26,10 @@ while True:
         if body is None:
           continue
         del message['payload']['parts']
-      message['payload']['body'] = base64.b64decode(body)
+      try:
+        message['payload']['body'] = base64.b64decode(body)
+      except TypeError:
+        message['payload']['body'] = body
       message['userid'] = u['_id']
       try:
         object_id = raw_data.insert(message)
