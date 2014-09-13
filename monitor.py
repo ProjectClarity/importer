@@ -29,7 +29,7 @@ while True:
           continue
         del message['payload']['parts']
       try:
-        message['payload']['body'] = base64.b64decode(body)
+        message['payload']['body'] = base64.urlsafe_b64decode(body)
       except TypeError:
         message['payload']['body'] = body
       message['userid'] = u['_id']
