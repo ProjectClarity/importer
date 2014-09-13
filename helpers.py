@@ -1,5 +1,9 @@
 from remote import *
 import apiclient.discovery, httplib2
+from itertools import chain, imap
+
+def flatmap(f, items):
+  return chain.from_iterable(imap(f, items))
 
 def send_to_queue(d):
   message = JSONMessage()
