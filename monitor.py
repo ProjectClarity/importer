@@ -1,4 +1,4 @@
-import time
+import time, base64
 from remote import *
 from user import User
 
@@ -8,7 +8,26 @@ while True:
     messages, history_token = user.get_new_messages()
     user.set('history_token', history_token)
     for message in messages:
-      print message['payload']['mimeType']
+      if message['payload']['mimeType'] in ['text/plain', 'text/html']:
+        body = message['payload']['body']
+      else:
+        parts = message['payload']['parts']
+        body = None
+        for part in parts:
+          if part['mimeType'] == 'text/plain':
+            body = part['body']['data']
+            break
+        if body is None:
+          for part in parts:
+            if part['mimeType'] == 'text/html':
+              body = part['body']['data']
+              break
+        if body is None:
+          continue
+      del message['payload']['parts']
+      message['payload']['body'] = base64.b64decode(body)
+      try:
+        print message
+      except:
+        continue
   time.sleep(1)
-  print 'here'
-
