@@ -58,14 +58,5 @@ class User():
     full_messages = map(lambda x: x['messages'][0], threads)
     return full_messages, history['historyId']
 
-  def tag_message(self, message_id, tags):
-    gmail_service = self.build('gmail', v='v1')
-    labels = {x['name']:x['id'] for x in gmail_service.users().labels().list(userId='me').execute()['labels']}
-    for tag in tags:
-      if tag not in labels.keys():
-        label = {'messageListVisibility': 'show', 'name': tag, 'labelListVisibility': 'labelShow'}
-        labels[tag] = gmail_service.users().labels().create(userId='me', body=label).execute()['id']
-    gmail_service.users().messages().modify(userId='me', id=message_id, body={'addLabelIds': [labels[x] for x in tags]}).execute()
-
   def build(self, service, **kwargs):
     return helpers_build(service, self.get_credentials(), **kwargs)
