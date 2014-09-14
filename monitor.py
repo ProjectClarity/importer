@@ -53,4 +53,4 @@ while True:
       except:
         print "Ignored duplicate {}".format(message['id'])
         continue
-  time.sleep(30)
+  time.sleep(10)
