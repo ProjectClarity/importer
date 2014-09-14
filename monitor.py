@@ -4,6 +4,12 @@ from user import User
 from helpers import send_to_queue
 import email.utils
 
+def get_header(message, name):
+  for header in message['payload']['headers']:
+    if header['name'] == name:
+      return header['value']
+  return None
+
 while True:
   for u in users.find({}):
     user = User(u['email'])
@@ -47,9 +53,3 @@ while True:
         print "Ignored duplicate {}".format(message['id'])
         continue
   time.sleep(30)
-
-def get_header(message, name):
-  for header in message['payload']['headers']:
-    if header['name'] == name:
-      return header['value']
-  return None
