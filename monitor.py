@@ -24,7 +24,8 @@ while True:
         parts = message['payload']['parts']
         body = None
         order = ['text/plain', 'text/html']
-        if any([x in email.utils.parseaddr(get_header(message, 'From')) for x in ['eventbrite.com']]):
+        from_email =  email.utils.parseaddr(get_header(message, 'From'))[1]
+        if any([x in from_email for x in ['eventbrite.com']]):
           order.reverse()
         for part in parts:
           if part['mimeType'] == order[0]:
