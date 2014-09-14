@@ -2,7 +2,7 @@ from helpers import build as helpers_build
 from helpers import flatmap
 from remote import users
 from oauth2client.client import OAuth2Credentials
-import json
+import json, time, apiclient
 
 class User():
   def __init__(self, email):
@@ -60,7 +60,12 @@ class User():
 
   def tag_message(self, message_id, tags):
     gmail_service = self.build('gmail', v='v1')
-    gmail_service.messages().modify(userId='me', id=message_id, body={'addLabelIds': tags}).execute()
+    labels = {x['name']:x['id'] for x in gmail_service.users().labels().list(userId='me').execute()['labels']}
+    for tag in tags:
+      if tag not in labels.keys():
+        label = {'messageListVisibility': 'show', 'name': tag, 'labelListVisibility': 'labelShow'}
+        labels[tag] = gmail_service.users().labels().create(userId='me', body=label).execute()['id']
+    gmail_service.users().messages().modify(userId='me', id=message_id, body={'addLabelIds': [labels[x] for x in tags]}).execute()
 
   def build(self, service, **kwargs):
     return helpers_build(service, self.get_credentials(), **kwargs)
