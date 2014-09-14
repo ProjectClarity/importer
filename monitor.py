@@ -12,18 +12,18 @@ while True:
       if 'TRASH' in message.get('labelIds', []):
         continue
       if message['payload']['mimeType'] in ['text/plain', 'text/html']:
-        body = message['payload']['body']['data']
+        body = message['payload']['body'].get('data')
       else:
         parts = message['payload']['parts']
         body = None
         for part in parts:
           if part['mimeType'] == 'text/plain':
-            body = part['body']['data']
+            body = part['body'].get('data')
             break
         if body is None:
           for part in parts:
             if part['mimeType'] == 'text/html':
-              body = part['body']['data']
+              body = part['body'].get('data')
               break
         if body is None:
           continue
