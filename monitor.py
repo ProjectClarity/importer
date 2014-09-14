@@ -2,6 +2,7 @@ import time, base64
 from remote import *
 from user import User
 from helpers import send_to_queue
+import email.utils
 
 while True:
   for u in users.find({}):
