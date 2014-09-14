@@ -1,4 +1,4 @@
-import time, base64
+import time, base64, os
 from remote import *
 from user import User
 from helpers import send_to_queue
