@@ -16,13 +16,16 @@ while True:
       else:
         parts = message['payload']['parts']
         body = None
+        order = ['text/plain', 'text/html']
+        if any([x in email.utils.parseaddr(get_header(message, 'From')) for x in ['eventbrite.com']]):
+          order.reverse()
         for part in parts:
-          if part['mimeType'] == 'text/plain':
+          if part['mimeType'] == order[0]:
             body = part['body'].get('data')
             break
         if body is None:
           for part in parts:
-            if part['mimeType'] == 'text/html':
+            if part['mimeType'] == order[1]:
               body = part['body'].get('data')
               break
         if body is None:
@@ -43,3 +46,9 @@ while True:
         print "Ignored duplicate {}".format(message['id'])
         continue
   time.sleep(30)
+
+def get_header(message, name):
+  for header in message['payload']['headers']:
+    if header['name'] == name:
+      return header['value']
+  return None
