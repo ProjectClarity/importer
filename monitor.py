@@ -49,6 +49,7 @@ while True:
       try:
         object_id = raw_data.insert(message)
         send_to_queue({'object_id': str(object_id)})
+        user.tag_message(message['id'], [os.getenv('TAG_NAME')])
         print "Processed {}".format(message['id'])
       except:
         print "Ignored duplicate {}".format(message['id'])

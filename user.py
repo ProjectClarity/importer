@@ -58,5 +58,9 @@ class User():
     full_messages = map(lambda x: x['messages'][0], threads)
     return full_messages, history['historyId']
 
+  def tag_message(self, message_id, tags):
+    gmail_service = self.build('gmail', v='v1')
+    gmail_service.messages().modify(userId='me', id=message_id, body={'addLabelIds': tags}).execute()
+
   def build(self, service, **kwargs):
     return helpers_build(service, self.get_credentials(), **kwargs)
