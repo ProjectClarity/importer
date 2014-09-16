@@ -18,6 +18,8 @@ while True:
     for message in messages:
       if 'TRASH' in message.get('labelIds', []):
         continue
+      if processed_data.find_one({'email_id': message['id']}):
+        continue
       if message['payload']['mimeType'] in ['text/plain', 'text/html']:
         body = message['payload']['body'].get('data')
       else:
