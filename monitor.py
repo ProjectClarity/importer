@@ -2,7 +2,7 @@ import time, base64
 from remote import *
 from user import User
 from helpers import send_to_queue
-import email.utils
+import email.utils, oauth2client
 
 def get_header(message, name):
   for header in message['payload']['headers']:
@@ -11,9 +11,13 @@ def get_header(message, name):
   return None
 
 while True:
-  for u in users.find({}):
+  for u in users.find({'disabled': {'$ne': True}}):
     user = User(u['email'])
-    messages, history_token = user.get_new_messages()
+    try:
+      messages, history_token = user.get_new_messages()
+    except oauth2client.client.AccessTokenRefreshError:
+      user.set('disabled', True)
+      continue
     user.set('history_token', history_token)
     for message in messages:
       if 'TRASH' in message.get('labelIds', []):
