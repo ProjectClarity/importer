@@ -16,6 +16,7 @@ while True:
     try:
       messages, history_token = user.get_new_messages()
     except oauth2client.client.AccessTokenRefreshError:
+      print "Disabled User {}".format(user.get('_id'))
       user.set('disabled', True)
       continue
     user.set('history_token', history_token)
