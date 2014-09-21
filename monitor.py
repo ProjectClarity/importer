@@ -27,9 +27,11 @@ while True:
         continue
       if message['payload']['mimeType'] in ['text/plain', 'text/html']:
         body = message['payload']['body'].get('data')
+        mime_type = message['payload']['mimeType']
       else:
         parts = message['payload']['parts']
         body = None
+        mime_type = None
         order = ['text/plain', 'text/html']
         from_email =  email.utils.parseaddr(get_header(message, 'From'))[1]
         if any([x in from_email for x in ['eventbrite.com']]):
@@ -37,11 +39,13 @@ while True:
         for part in parts:
           if part['mimeType'] == order[0]:
             body = part['body'].get('data')
+            mime_type = part['mimeType']
             break
         if body is None:
           for part in parts:
             if part['mimeType'] == order[1]:
               body = part['body'].get('data')
+              mime_type = part['mimeType']
               break
         if body is None:
           continue
@@ -53,6 +57,7 @@ while True:
         continue
       message['userid'] = u['_id']
       message['payload']['headers'].append({"name": "X-Time-Zone", "value": user.get_timezone()})
+      message['payload']['mimeType'] = mime_type
       try:
         object_id = raw_data.insert(message)
         send_to_queue({'object_id': str(object_id)})
