@@ -2,7 +2,7 @@ import time, base64
 from remote import *
 from user import User
 from helpers import send_to_queue
-import email.utils, oauth2client
+import email.utils, oauth2client, datetime
 
 def get_header(message, name):
   for header in message['payload']['headers']:
@@ -11,13 +11,18 @@ def get_header(message, name):
   return None
 
 while True:
+  for u in users.find({'disabled': True}):
+    user = User(u['email'])
+    expiry_date = datetime.datetime.utcnow() - datetime.timedelta(hours=1)
+    if user.get('disabled_at', expiry_date) <= expiry_date:
+      user.set('disabled', False)
   for u in users.find({'disabled': {'$ne': True}}):
     user = User(u['email'])
     try:
       messages, history_token = user.get_new_messages()
     except oauth2client.client.AccessTokenRefreshError:
       print "Disabled User {}".format(user.get('_id'))
-      user.set('disabled', True)
+      user.update({'disabled': True, 'disabled_at': datetime.datetime.utcnow()})
       continue
     user.set('history_token', history_token)
     for message in messages:

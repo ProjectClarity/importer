@@ -8,8 +8,8 @@ class User():
   def __init__(self, email):
     self.user = users.find_one({'email': email})
 
-  def get(self, key):
-    return self.user.get(key, '')
+  def get(self, key, default=''):
+    return self.user.get(key, default)
 
   def set(self, key, value):
     self.update({key: value})
